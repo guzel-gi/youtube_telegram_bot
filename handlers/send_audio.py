@@ -1,8 +1,11 @@
+import logging
 from utils import download, remove
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.types import FSInputFile
+
+logging.basicConfig(filename='logs.log', level=logging.ERROR)
 
 router = Router()
 
@@ -13,10 +16,11 @@ async def cmd_start(message: Message):
 @router.message()
 async def send_audio_file(message: Message):
     try:
-        file_path = download.download_video(message.text)
-        audio_file = FSInputFile(file_path)
-        await message.answer_voice(audio_file)
-        remove.remove_file(file_path)
-    except:
+        info = download.download_video(message.text)
+        audio_file = FSInputFile(info['file_path'])
+        await message.answer_voice(voice=audio_file, caption=info['title'])
+        remove.remove_file(info['file_path'])
+    except Exception:
+        logging.error(Exception, exc_info=True)
         await message.answer('Ничего не нашел. Проверьте правильность ссылки')
     
