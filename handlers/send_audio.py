@@ -1,5 +1,6 @@
 import logging
 from utils import download, remove
+from utils.audio_functions import get_audio_size
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -16,7 +17,7 @@ async def cmd_start(message: Message):
 @router.message()
 async def send_audio_file(message: Message):
     try:
-        info = download.download_video(message.text)
+        info = download.download_audio(message.text)
         audio_file = FSInputFile(info['file_path'])
         await message.answer_voice(voice=audio_file, caption=info['title'])
         remove.remove_file(info['file_path'])
